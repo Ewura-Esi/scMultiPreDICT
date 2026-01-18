@@ -6,11 +6,16 @@ library(tidyverse)
 library(writexl)
 
 # ==============================================================================
+# CONFIGURATION - Update output path
+# ==============================================================================
+OUTPUT_DIR <- "~/scMultiPreDICT_output/paper_figures/tables/"
+dir.create(OUTPUT_DIR, recursive = TRUE, showWarnings = FALSE)
+
+# ==============================================================================
 # 1. PREPARE THE DATA
 # ==============================================================================
-
-# 1. ADD STATUS COLUMN TO THE MAIN DATAFRAME
-# Obtain Gene Status based on whether they improve on performance by adding atac to rna
+# NOTE: This script assumes you have already loaded 'df_delta' from your analysis
+# df_delta should contain: Gene, Integrated_Analysis, rna_spearman, spearman, delta_spear
 df_export <- df_delta %>%
   mutate(status = case_when( 
     delta_spear >  0.01 ~ "Improved", 
@@ -43,6 +48,7 @@ sheets_list <- list(
 )
 
 # 4. SAVE TO EXCEL
-write_xlsx(sheets_list, "~/PROJECTS/2025.PERTURBATION_MODELLING/Combined_Figures_Finale/Tables/Supplementary_Table_S1_Gene_Lists.xlsx")
+output_file <- file.path(OUTPUT_DIR, "Supplementary_Table_S1_Gene_Lists.xlsx")
+write_xlsx(sheets_list, output_file)
 
-message("Excel file created with actual scores!")
+message("Excel file created: ", output_file)

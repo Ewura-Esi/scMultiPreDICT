@@ -106,8 +106,14 @@ cat(sprintf("Test: %d cells\n", length(smoothed_test$cells)))
 # ===============Add RNA Expression Data=========================
 cat("\n=== Adding RNA expression data to smoothed structures ===\n")
 
-input_dir_rna <- path.expand("~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_only/data/processed/metacells/" )
-input_dir_rna <- file.path(input_dir_rna, SAMPLE_NAME, "pca")
+# RNA metacell directory - should be set in config.R
+# For ATAC-only pipeline, RNA data is needed as the target variable (Y)
+# Update RNA_METACELL_DIR in config.R to point to your RNA-only pipeline output
+if (!exists("RNA_METACELL_DIR")) {
+  # Default: assume RNA-only pipeline output is in a parallel directory
+  RNA_METACELL_DIR <- gsub("scATAC_only", "scRNA_only", BASE_OUTPUT_DIR)
+}
+input_dir_rna <- file.path(RNA_METACELL_DIR, "metacells", SAMPLE_NAME, "pca")
   
   # Check if RNA assay exists
 if (!"RNA" %in% names(seurat_obj@assays)) {

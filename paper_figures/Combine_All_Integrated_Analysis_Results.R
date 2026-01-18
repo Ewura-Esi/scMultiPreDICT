@@ -24,69 +24,35 @@ suppressPackageStartupMessages({
 # ============================================================================
 # 2. CONFIGURATION - EDIT THIS SECTION
 # ============================================================================
+# Update BASE_RESULTS_DIR to point to your scMultiPreDICT output directory
+# The expected folder structure is:
+#   BASE_RESULTS_DIR/
+#     LINEAR_AND_TREE_BASED/{sample}/{method}/{gene_set}/
+#     NEURAL_NETWORKS/{sample}/{method}/Three_hidden_layer/{gene_set}/
 
+BASE_RESULTS_DIR <- "~/scMultiPreDICT_output/results/models"
 
-pca_lsi <- list(
-  "E7.5_REP1" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep1/pca_lsi/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/E7.5_rep1/pca_lsi/Three_hidden_layer/Three_hidden_layer/HVG/"
-  ),
-  "E7.5_REP2" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep2/pca_lsi/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/E7.5_rep2/pca_lsi/Three_hidden_layer/Three_hidden_layer/HVG/"
-  ),
-  "T_Cells" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/T_Cells/pca_lsi/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/T_Cells/pca_lsi/Three_hidden_layer/Three_hidden_layer/HVG/"
+# Helper function to construct paths
+make_paths <- function(base, sample, method, gene_set = "HVG") {
+  list(
+    linear_path = file.path(base, "LINEAR_AND_TREE_BASED", sample, method, gene_set),
+    nn_path = file.path(base, "NEURAL_NETWORKS", sample, method, "Three_hidden_layer", "Three_hidden_layer", gene_set)
   )
-)
+}
 
-wnn <- list(
-  "E7.5_REP1" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep1/wnn/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/E7.5_rep1/wnn/Three_hidden_layer/Three_hidden_layer/HVG/"
-  ),
-  "E7.5_REP2" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep2/wnn/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/E7.5_rep2/wnn/Three_hidden_layer/Three_hidden_layer/HVG/"
-  ),
-  "T_Cells" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/T_Cells/wnn/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/T_Cells/wnn/Three_hidden_layer/Three_hidden_layer/HVG/"
-  )
-)
+# Define datasets and methods
+SAMPLES <- c("E7.5_rep1", "E7.5_rep2", "T_Cells")
+SAMPLE_LABELS <- c("E7.5_REP1", "E7.5_REP2", "T_Cells")
+GENE_SET <- "HVG"  # or "Random_genes" for non-HVG analysis
 
-scvi_peakvi <- list(
-  "E7.5_REP1" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep1/scvi_peakvi/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/E7.5_rep1/scvi_peakvi/Three_hidden_layer/Three_hidden_layer/HVG/"
-  ),
-  "E7.5_REP2" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep2/scvi_peakvi/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/E7.5_rep2/scvi_peakvi/Three_hidden_layer/Three_hidden_layer/HVG/"
-  ),
-  "T_Cells" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/T_Cells/scvi_peakvi/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/T_Cells/scvi_peakvi/Three_hidden_layer/Three_hidden_layer/HVG/"
-  )
-)
+# Build path configurations for each method
+pca_lsi <- setNames(lapply(SAMPLES, function(s) make_paths(BASE_RESULTS_DIR, s, "pca_lsi", GENE_SET)), SAMPLE_LABELS)
+wnn <- setNames(lapply(SAMPLES, function(s) make_paths(BASE_RESULTS_DIR, s, "wnn", GENE_SET)), SAMPLE_LABELS)
+scvi_peakvi <- setNames(lapply(SAMPLES, function(s) make_paths(BASE_RESULTS_DIR, s, "scvi_peakvi", GENE_SET)), SAMPLE_LABELS)
+multivi <- setNames(lapply(SAMPLES, function(s) make_paths(BASE_RESULTS_DIR, s, "multivi", GENE_SET)), SAMPLE_LABELS)
 
-multivi <- list(
-  "E7.5_REP1" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep1/multivi/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/E7.5_rep1/multivi/Three_hidden_layer/Three_hidden_layer/HVG/"
-  ),
-  "E7.5_REP2" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep2/multivi/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/E7.5_rep2/multivi/Three_hidden_layer/Three_hidden_layer/HVG/"
-  ),
-  "T_Cells" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/T_Cells/multivi/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/T_Cells/multivi/Three_hidden_layer/Three_hidden_layer/HVG/"
-  )
-)
-
-output_dir <- "~/PROJECTS/2025.PERTURBATION_MODELLING/Combined_Figures_Finale/Figure4/HVGs/Combined_Plots/"
+# Output directory for figures
+output_dir <- "~/scMultiPreDICT_output/paper_figures/integrated_analysis/"
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 

@@ -24,23 +24,26 @@ suppressPackageStartupMessages({
 # ============================================================================
 # 2. CONFIGURATION - EDIT THIS SECTION
 # ============================================================================
+# Update BASE_RESULTS_DIR to point to your scMultiPreDICT output directory
 
-datasets <- list(
-  "E7.5_REP1" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep1/pca_lsi/Random_genes/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/E7.5_rep1/pca_lsi/Three_hidden_layer/Three_hidden_layer/Random_genes/"
-  ),
-  "E7.5_REP2" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep2/pca_lsi/Random_genes/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/E7.5_rep2/pca_lsi/Three_hidden_layer/Three_hidden_layer/Random_genes/"
-  ),
-  "T_Cells" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/T_Cells/pca_lsi/Random_genes/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/NEURAL_NETWORKS/T_Cells/pca_lsi/Three_hidden_layer/Three_hidden_layer/Random_genes/"
+BASE_RESULTS_DIR <- "~/scMultiPreDICT_output/results/models"
+DIMRED_METHOD <- "pca_lsi"       # Options: "pca_lsi", "wnn", "scvi_peakvi", "multivi"
+GENE_SET <- "Random_genes"        # This script is for non-HVG analysis
+
+# Define samples to analyze
+SAMPLES <- c("E7.5_rep1", "E7.5_rep2", "T_Cells")
+SAMPLE_LABELS <- c("E7.5_REP1", "E7.5_REP2", "T_Cells")
+
+# Build dataset paths
+datasets <- setNames(lapply(SAMPLES, function(s) {
+  list(
+    linear_path = file.path(BASE_RESULTS_DIR, "LINEAR_AND_TREE_BASED", s, DIMRED_METHOD, GENE_SET),
+    nn_path = file.path(BASE_RESULTS_DIR, "NEURAL_NETWORKS", s, DIMRED_METHOD, "Three_hidden_layer", "Three_hidden_layer", GENE_SET)
   )
-)
+}), SAMPLE_LABELS)
 
-output_dir <- "~/PROJECTS/2025.PERTURBATION_MODELLING/Combined_Figures_Finale/Figure4/pca_lsi/Non-HVGs/"
+# Output directory
+output_dir <- file.path("~/scMultiPreDICT_output/paper_figures", DIMRED_METHOD, "Non-HVGs")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 # ============================================================================

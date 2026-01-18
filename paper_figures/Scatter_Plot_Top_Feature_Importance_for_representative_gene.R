@@ -36,15 +36,21 @@ suppressPackageStartupMessages({
 # - Genes : vector of genes to process for this dataset
 # (NA or empty -> auto-select best gene via metrics file)
 # ------------------------------------------------------------------------------
+# Update BASE_RESULTS_DIR to point to your scMultiPreDICT output directory
+
+BASE_RESULTS_DIR <- "~/scMultiPreDICT_output/results/models"
+DIMRED_METHOD <- "pca_lsi"       # Options: "pca_lsi", "wnn", "scvi_peakvi", "multivi"
+GENE_SET <- "HVG"                # Options: "HVG", "Random_genes"
+
 cfg <- tibble::tribble(
-  ~Dataset,    ~BasePath,                                                                                                               ~Genes,
-  "E7.5_REP1",  "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep1/pca_lsi/HVG/",  c("Etv6", "Stox2", "Mob3b", "Meis2", "Runx1t1"),
-  "E7.5_REP2",  "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep2/pca_lsi/HVG/",  c("Tbx3", "Bahcc1", "Cask", "Pbx3", "Cbx7"),
-  "T_Cells",    "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/T_Cells/pca_lsi/HVG/", c("RUNX3","LEF1","TCF7", "JUN", "STAT4")
+  ~Dataset,    ~BasePath,                                                                      ~Genes,
+  "E7.5_REP1", file.path(BASE_RESULTS_DIR, "LINEAR_AND_TREE_BASED/E7.5_rep1", DIMRED_METHOD, GENE_SET), c("Etv6", "Stox2", "Mob3b", "Meis2", "Runx1t1"),
+  "E7.5_REP2", file.path(BASE_RESULTS_DIR, "LINEAR_AND_TREE_BASED/E7.5_rep2", DIMRED_METHOD, GENE_SET), c("Tbx3", "Bahcc1", "Cask", "Pbx3", "Cbx7"),
+  "T_Cells",   file.path(BASE_RESULTS_DIR, "LINEAR_AND_TREE_BASED/T_Cells", DIMRED_METHOD, GENE_SET),   c("RUNX3", "LEF1", "TCF7", "JUN", "STAT4")
 )
 
 # Root output directory
-out_dir <- "~/PROJECTS/2025.PERTURBATION_MODELLING/Combined_Figures_Finale/Figure5/HVGs/Gene_Specific_Figures_QN"
+out_dir <- "~/scMultiPreDICT_output/paper_figures/gene_specific_figures/"
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 # ---- Global Theme (set once) ----

@@ -257,10 +257,12 @@ seurat_obj_full@meta.data$dice.fine   <- dice.fine$pruned.labels
 seurat_obj_full@meta.data$monaco.fine <- monaco.fine$pruned.labels
 
 # Save seurat obj with cell annotations
-saveRDS(seurat_obj_full, "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/data/processed/seurat_obj/Human_PBMC_Dataset/Human_PBMC_With_Cell_Annotations_Multiome_processed.rds")
+seurat_output_dir <- file.path(OUTPUT_DIR, "seurat_obj")
+dir.create(seurat_output_dir, recursive = TRUE, showWarnings = FALSE)
+saveRDS(seurat_obj_full, file.path(seurat_output_dir, "Human_PBMC_With_Cell_Annotations_Multiome_processed.rds"))
 
 # Read in the saved seurat obj
-seurat_obj <- readRDS("~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/data/processed/seurat_obj/Human_PBMC_Dataset/Human_PBMC_With_Cell_Annotations_Multiome_processed.rds")
+seurat_obj <- readRDS(file.path(seurat_output_dir, "Human_PBMC_With_Cell_Annotations_Multiome_processed.rds"))
 
 # Visualise cell annotations
 seurat_obj_sub <- subset(seurat_obj, subset = !is.na(monaco.fine))
@@ -280,10 +282,13 @@ mcells_barcodes <- colnames(seurat_obj)[seurat_obj$hpca.main %in% mono_labels]
 length(mcells_barcodes)
 
 # Save barcodes for downstream analysis
-write.table(tcells_barcodes, file="~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/data/processed/celltype_specific_barcodes/Tcells_barcodes.txt",
+barcodes_output_dir <- file.path(OUTPUT_DIR, "celltype_specific_barcodes")
+dir.create(barcodes_output_dir, recursive = TRUE, showWarnings = FALSE)
+
+write.table(tcells_barcodes, file=file.path(barcodes_output_dir, "Tcells_barcodes.txt"),
             quote=FALSE, row.names=FALSE, col.names=FALSE)
 
-write.table(mcells_barcodes, file="~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/data/processed/celltype_specific_barcodes/monocytes_barcodes.txt",
+write.table(mcells_barcodes, file=file.path(barcodes_output_dir, "monocytes_barcodes.txt"),
             quote=FALSE, row.names=FALSE, col.names=FALSE)
 
 # 1. Force join layers for the RNA assay 
@@ -344,13 +349,7 @@ print(seurat_subset)
 
 
 # Call peaks
-peaks_subset <- CallPeaks(
-  object = seurat_subset,
-  assay = "ATAC",
-  name = "t_cells",
-  macs2.path = "/ri/shared/modules8/MACS2/2.2.9.1/bin/macs2",
-  outdir = normalizePath(path.expand("~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/data/processed/peaks_t_cells_output"), mustWork = FALSE)
-)
+peaks_output_dir <- file.path(OUTPUT_DIR, \"peaks_t_cells_output\")\ndir.create(peaks_output_dir, recursive = TRUE, showWarnings = FALSE)\n\npeaks_subset <- CallPeaks(\n  object = seurat_subset,\n  assay = \"ATAC\",\n  name = \"t_cells\",\n  macs2.path = \"/ri/shared/modules8/MACS2/2.2.9.1/bin/macs2\",  # Update this path for your system\n  outdir = peaks_output_dir\n)
 
 peaks_subset <- keepStandardChromosomes(peaks_subset, pruning.mode = "coarse")
 if (exists("blacklist_hg38_unified")) {
@@ -406,6 +405,6 @@ all(colnames(peak_counts)%in% valid_cells)
 head(colnames(Fragments(seurat_subset[["ATAC"]])[[1]]))
 
 
-saveRDS(seurat_subset, "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/data/processed/seurat_obj/Human_PBMC_Dataset/T_cells_seurat_multiome_processed.rds")
+saveRDS(seurat_subset, file.path(seurat_output_dir, "T_cells_seurat_multiome_processed.rds"))
 
-set
+message("T cell subset saved to: ", file.path(seurat_output_dir, "T_cells_seurat_multiome_processed.rds"))

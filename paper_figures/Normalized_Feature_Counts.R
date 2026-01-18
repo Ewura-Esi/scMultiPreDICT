@@ -25,12 +25,26 @@ cols <- c("RNA(Gene)" = "#377EB8", "ATAC(Peak)" = "#E41A1C")
 # ============================================================================== 
 # 1. CONFIGURATION: Define paths to your LINEAR/RF OUTPUT folders 
 # ============================================================================== 
-# IMPORTANT: These folders must contain your 'coefficients.csv' or 'feature_importance.csv' 
-datasets <- list(
-  "E7.5_REP1" = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep1/pca_lsi/HVG/",
-  "E7.5_REP2" =  "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/E7.5_rep2/pca_lsi/HVG/",
-  "T_Cells" = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_scATAC/results/models/LINEAR_AND_TREE_BASED/T_Cells/pca_lsi/HVG/"
+# Update BASE_RESULTS_DIR to point to your scMultiPreDICT output directory
+# IMPORTANT: These folders must contain your 'coefficients.csv' or 'feature_importance.csv'
+
+BASE_RESULTS_DIR <- "~/scMultiPreDICT_output/results/models"
+DIMRED_METHOD <- "pca_lsi"       # Options: "pca_lsi", "wnn", "scvi_peakvi", "multivi"
+GENE_SET <- "HVG"                # Options: "HVG", "Random_genes"
+
+# Define samples to analyze
+SAMPLES <- c("E7.5_rep1", "E7.5_rep2", "T_Cells")
+SAMPLE_LABELS <- c("E7.5_REP1", "E7.5_REP2", "T_Cells")
+
+# Build dataset paths
+datasets <- setNames(
+  sapply(SAMPLES, function(s) file.path(BASE_RESULTS_DIR, "LINEAR_AND_TREE_BASED", s, DIMRED_METHOD, GENE_SET)),
+  SAMPLE_LABELS
 )
+
+# Output directory for figures
+OUTPUT_FIG_DIR <- file.path("~/scMultiPreDICT_output/paper_figures/feature_analysis", DIMRED_METHOD, GENE_SET)
+dir.create(OUTPUT_FIG_DIR, recursive = TRUE, showWarnings = FALSE)
 
 
 load_dataset_coeffs <- function(dataset_name, base_path) {
@@ -117,7 +131,7 @@ p_raw <- ggplot(stats_raw, aes(x = Model, y = Mean, fill = Feature_Type)) +
   theme_pub() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave("~/PROJECTS/2025.PERTURBATION_MODELLING/Combined_Figures_Finale/Figure5/HVGs/Fig_Feature_Raw_Counts_PCA_LSI_HVG.pdf", p_raw, width = 12, height = 6)
+ggsave(file.path(OUTPUT_FIG_DIR, "Fig_Feature_Raw_Counts.pdf"), p_raw, width = 12, height = 6)
 message("Saved: Fig_Feature_Raw_Counts.pdf")
 
 # ==============================================================================
@@ -144,7 +158,7 @@ p_norm <- ggplot(stats_norm, aes(x = Model, y = Mean, fill = Feature_Type)) +
   theme(panel.border = element_blank(), axis.line = element_line(colour="black"))+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave("~/PROJECTS/2025.PERTURBATION_MODELLING/Combined_Figures_Finale/Figure5/HVGs/Fig_Feature_Selection_Normalized_PCA_LSI_HVG.pdf", p_norm, width = 12, height = 6)
+ggsave(file.path(OUTPUT_FIG_DIR, "Fig_Feature_Selection_Normalized.pdf"), p_norm, width = 12, height = 6)
 message("Saved: Fig_Feature_Selection_Normalized.pdf")
 
 print(p_norm)

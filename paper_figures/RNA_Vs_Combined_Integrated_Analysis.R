@@ -24,25 +24,27 @@ suppressPackageStartupMessages({
 # ============================================================================
 # 2. CONFIGURATION - EDIT THIS SECTION
 # ============================================================================
+# This script compares RNA-only vs Combined (RNA+ATAC) performance
+# Update BASE_RESULTS_DIR to point to your scMultiPreDICT output directory
 
+RNA_RESULTS_DIR <- "~/scMultiPreDICT_output/rna_only/results/models"
+RNA_METHOD <- "pca"              # Options: "pca", "scvi"
+GENE_SET <- "HVG"                # Options: "HVG", "Random_genes"
 
-pca_rna <- list(
-  "E7.5_REP1" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_only/results/models/LINEAR_AND_TREE_BASED/E7.5_rep1/pca/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_only/results/models/NEURAL_NETWORKS/E7.5_rep1/pca/Three_hidden_layer/HVG/"
-  ),
-  "E7.5_REP2" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_only/results/models/LINEAR_AND_TREE_BASED/E7.5_rep2/pca/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/MESC_Dataset/Peak_Approach/scRNA_only/results/models/NEURAL_NETWORKS/E7.5_rep2/pca/Three_hidden_layer/HVG/"
-  ),
-  "T_Cells" = list(
-    linear_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_only/results/models/LINEAR_AND_TREE_BASED/T_Cells/pca/HVG/",
-    nn_path = "~/PROJECTS/2025.PERTURBATION_MODELLING/Human_PBMC_Dataset/Peak_Approach/scRNA_only/results/models/NEURAL_NETWORKS/T_Cells/pca/Three_hidden_layer/HVG/"
+# Define samples to analyze
+SAMPLES <- c("E7.5_rep1", "E7.5_rep2", "T_Cells")
+SAMPLE_LABELS <- c("E7.5_REP1", "E7.5_REP2", "T_Cells")
+
+# Build RNA-only dataset paths
+pca_rna <- setNames(lapply(SAMPLES, function(s) {
+  list(
+    linear_path = file.path(RNA_RESULTS_DIR, "LINEAR_AND_TREE_BASED", s, RNA_METHOD, GENE_SET),
+    nn_path = file.path(RNA_RESULTS_DIR, "NEURAL_NETWORKS", s, RNA_METHOD, "Three_hidden_layer", GENE_SET)
   )
-)
+}), SAMPLE_LABELS)
 
-
-output_dir <- "~/PROJECTS/2025.PERTURBATION_MODELLING/Combined_Figures_Finale/Figure4/HVGs/Combined_Plots/"
+# Output directory
+output_dir <- "~/scMultiPreDICT_output/paper_figures/rna_vs_combined/"
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 
