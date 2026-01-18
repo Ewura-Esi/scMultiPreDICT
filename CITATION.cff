@@ -1,0 +1,55 @@
+# Citation File Format (CFF) for scMultiPreDICT
+# See: https://citation-file-format.github.io/
+
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+
+title: "scMultiPreDICT: A Computational Framework for Predicting Gene Expression from Single-Cell Multiome Data"
+version: 1.0.0
+date-released: 2025-01-14
+license: MIT
+type: software
+
+repository-code: "https://github.com/yourusername/scMultiPreDICT"
+url: "https://github.com/yourusername/scMultiPreDICT"
+
+authors:
+  - family-names: "Manful"
+    given-names: "Ewura-Esi"
+    # orcid: "https://orcid.org/XXXX-XXXX-XXXX-XXXX"  # TODO: Add your ORCID
+    affiliation: "Pennsylvania State University"
+
+keywords:
+  - single-cell genomics
+  - multiome sequencing
+  - gene expression prediction
+  - machine learning
+  - scRNA-seq
+  - scATAC-seq
+  - chromatin accessibility
+  - transcriptomics
+
+abstract: >-
+  scMultiPreDICT is a computational framework for predicting gene expression
+  from single-cell multiome (joint RNA-seq and ATAC-seq) data. The framework
+  systematically evaluates multiple feature modalities (combined RNA+ATAC,
+  RNA-only, ATAC-only), metacell construction approaches (PCA+LSI, WNN,
+  scVI+PeakVI, MultiVI), and machine learning models (linear regression,
+  regularized regression, random forest, neural networks) to identify optimal
+  strategies for gene expression prediction from chromatin accessibility and
+  transcriptomic features.
+
+# preferred-citation:
+#   type: article
+#   authors:
+#     - family-names: "LASTNAME"
+#       given-names: "FIRSTNAME"
+#       orcid: "https://orcid.org/0000-0000-0000-0000"
+#   title: "Predicting Gene Expression from Single-Cell Multiome Data: A Systematic Comparison of Feature Modalities and Machine Learning Approaches"
+#   journal: "JOURNAL_NAME"
+#   year: 2025
+#   volume: X
+#   issue: X
+#   start: XXX
+#   end: XXX
+#   doi: "10.xxxx/xxxxxxx"
