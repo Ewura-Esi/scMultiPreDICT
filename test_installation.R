@@ -106,29 +106,32 @@ if (test_package("EnsDb.Hsapiens.v86", required = FALSE)) {
 }
 
 # ============================================================================
-# Test Deep Learning Packages (Optional)
+# Test Additional R Packages
 # ============================================================================
-cat("\nTesting deep learning packages (optional for neural networks)...\n")
+cat("\nTesting additional R packages...\n")
 cat("----------------------------------------------------------\n")
 
-dl_packages <- c("keras3", "tensorflow")
-for (pkg in dl_packages) {
-  if (test_package(pkg, required = FALSE)) {
+additional_packages <- c("patchwork", "viridis", "caret", "reticulate")
+for (pkg in additional_packages) {
+  if (test_package(pkg, required = TRUE)) {
     tests_passed <- tests_passed + 1
   } else {
-    warnings_list <- c(warnings_list, paste(pkg, "not installed - neural network training will not be available"))
+    tests_failed <- tests_failed + 1
   }
 }
 
 # ============================================================================
-# Test Python Environment (Optional)
+# Test Python Environment (Required for neural networks)
 # ============================================================================
-cat("\nTesting Python environment (optional for autoencoder methods)...\n")
+cat("\nTesting Python environment (required for neural networks & autoencoders)...\n")
 cat("----------------------------------------------------------\n")
 
 python_available <- FALSE
+tensorflow_available <- FALSE
+
 if (requireNamespace("reticulate", quietly = TRUE)) {
   cat("  [✓] reticulate package found\n")
+  tests_passed <- tests_passed + 1
   
   # Try to check Python
   tryCatch({
@@ -136,13 +139,27 @@ if (requireNamespace("reticulate", quietly = TRUE)) {
     cat(sprintf("  [✓] Python: %s\n", py_config$python))
     python_available <- TRUE
     
-    # Check for scvi-tools
+    # Check for TensorFlow (required for neural networks)
+    tf_available <- tryCatch({
+      reticulate::py_module_available("tensorflow")
+    }, error = function(e) FALSE)
+    
+    if (tf_available) {
+      cat("  [✓] TensorFlow available (neural networks supported)\n")
+      tensorflow_available <- TRUE
+      tests_passed <- tests_passed + 1
+    } else {
+      cat("  [!] TensorFlow NOT available - neural network training won't work\n")
+      warnings_list <- c(warnings_list, "TensorFlow not installed - run: pip install tensorflow")
+    }
+    
+    # Check for scvi-tools (optional for autoencoders)
     scvi_available <- tryCatch({
       reticulate::py_module_available("scvi")
     }, error = function(e) FALSE)
     
     if (scvi_available) {
-      cat("  [✓] scvi-tools available\n")
+      cat("  [✓] scvi-tools available (autoencoder methods supported)\n")
     } else {
       cat("  [!] scvi-tools NOT available - autoencoder methods won't work\n")
       warnings_list <- c(warnings_list, "scvi-tools not installed - scVI/PeakVI/MultiVI methods won't be available")
@@ -150,10 +167,11 @@ if (requireNamespace("reticulate", quietly = TRUE)) {
     
   }, error = function(e) {
     cat(sprintf("  [!] Python not configured: %s\n", e$message))
-    warnings_list <- c(warnings_list, "Python not configured - autoencoder methods won't be available")
+    warnings_list <- c(warnings_list, "Python not configured - neural networks and autoencoders won't be available")
   })
 } else {
-  cat("  [!] reticulate package not found\n")
+  cat("  [✗] reticulate package NOT FOUND\n")
+  tests_failed <- tests_failed + 1
   warnings_list <- c(warnings_list, "reticulate not installed - Python integration won't work")
 }
 

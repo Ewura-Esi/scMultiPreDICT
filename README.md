@@ -51,18 +51,33 @@ Alternatively, install packages manually:
 
 ```r
 # CRAN packages
-install.packages(c("Seurat", "glmnet", "ranger", "RANN", 
-                   "ggplot2", "dplyr", "Matrix", "keras3"))
+install.packages(c(
+  # Core
+  "Seurat", "Matrix", "dplyr", "tidyr", "ggplot2",
+  # Machine learning
+  "glmnet", "ranger", "caret",
+  # Utilities
+  "RANN", "reticulate", "patchwork", "viridis"
+))
 
 # Bioconductor packages
-BiocManager::install(c("Signac", "GenomicRanges", "rtracklayer"))
+BiocManager::install(c(
+  "Signac", "GenomicRanges", "GenomeInfoDb", 
+  "rtracklayer", "IRanges", "S4Vectors"
+))
+
+# Species-specific (install one based on your data)
+BiocManager::install("EnsDb.Mmusculus.v79")     # Mouse
+BiocManager::install("EnsDb.Hsapiens.v86")      # Human
 ```
 
-### 3. Install Python Dependencies (for autoencoder-based methods)
+### 3. Install Python Dependencies (for neural networks and autoencoder methods)
 
 ```bash
 pip install -r requirements.txt
 ```
+
+> **Note:** Neural network training uses TensorFlow/Keras via Python (through the `reticulate` R package), not the R keras package.
 
 ### 4. Verify Installation
 
