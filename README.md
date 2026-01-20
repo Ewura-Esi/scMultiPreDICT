@@ -1,6 +1,4 @@
-# scMultiPreDICT
-
-**scMultiPreDICT: A single-cell predictive framework with transcriptomic and epigenetic signatures**
+# scMultiPreDICT:  A single-cell predictive framework with transcriptomic and epigenetic signatures
 
 ## Overview
 
@@ -365,9 +363,8 @@ If you use scMultiPreDICT in your research, please cite:
 
 ## License
 
-This project is licensed under the MIT License. See (LICENSE) for details.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Contact
 
 For questions, bug reports, or feature requests, please open an issue on the [GitHub repository](https://github.com/UzunLab/scMultiPreDICT/issues).
-
