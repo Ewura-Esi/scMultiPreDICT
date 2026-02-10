@@ -126,7 +126,7 @@ cat(sprintf("Metacell script: %s\n", metacell_script))
 step_info <- list(
   list(name = "Quality Control", 
        script = "R/01_quality_control.R"),
-  list(name = "Data Splitting (pre-computed target genes)", 
+  list(name = "Data Splitting", 
        script = "R/02a_data_splitting.R"),
   list(name = sprintf("Metacell Creation (%s)", DIM_REDUCTION_METHOD), 
        script = metacell_script),
